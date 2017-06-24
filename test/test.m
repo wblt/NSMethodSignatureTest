@@ -25,6 +25,6 @@
 // 三个参数
 - (NSInteger)testDemo:(NSString *)dd withSeconde:(NSString *)sss withThree:(NSString *)three {
     NSLog(@"我进入了方法三====%@=====%@=====%@",dd,sss,three);
-    return 1;
+    return 20;
 }
 @end

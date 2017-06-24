@@ -16,4 +16,6 @@
 // 两个参数
 - (NSString *)testDemo:(NSString *)dd withSeconde:(NSString *)sss;
 
+// 三个参数
+- (NSInteger)testDemo:(NSString *)dd withSeconde:(NSString *)sss withThree:(NSString *)three;
 @end

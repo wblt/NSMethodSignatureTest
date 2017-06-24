@@ -30,7 +30,16 @@
     
     // 调用方法三
     [self perform:@"testDemo:withSeconde:withThree:" withObjects:@"first",@"sercond",@"three",nil];
-  }
+    
+}
+
+- (NSInteger )testDemo:(NSString *)dd {
+    
+    NSLog(@"我进入了方法一=====%@",dd);
+    
+    return 12;
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -81,14 +90,40 @@
     }
     //5.清空参数列表，并置参数指针args无效。
     va_end(args);
+    
+    //retain 所有参数，防止参数被释放dealloc
+    [invocation retainArguments];
     // 调用方法
     [invocation invoke];
-    // 获取返回值
-    id returnValue ;
-    if (signature.methodReturnLength) { // 有返回值类型，才去获得返回值
+    
+    //获得返回值类型
+    const char *returnType = signature.methodReturnType;
+    //声明返回值变量
+    id returnValue;
+    //如果没有返回值，也就是消息声明为void，那么returnValue=nil
+    if( !strcmp(returnType, @encode(void)) ){
+        returnValue =  nil;
+    }else if( !strcmp(returnType, @encode(id)) ){
+        //如果返回值为对象，那么为变量赋值
         [invocation getReturnValue:&returnValue];
+    } else{
+        //如果返回值为普通类型NSInteger  BOOL
+        //返回值长度
+        NSUInteger length = [signature methodReturnLength];
+        //根据长度申请内存
+        void *buffer = (void *)malloc(length);
+        //为变量赋值
+        [invocation getReturnValue:buffer];
+        if( !strcmp(returnType, @encode(BOOL)) ) {
+            returnValue = [NSNumber numberWithBool:*((BOOL*)buffer)];
+        }
+        else if( !strcmp(returnType, @encode(NSInteger)) ){
+            returnValue = [NSNumber numberWithInteger:*((NSInteger*)buffer)];
+        } else {
+            returnValue = [NSValue valueWithBytes:buffer objCType:returnType];
+        }
     }
-//    NSLog(@"result:%@",returnValue);
+    NSLog(@"result:%@",returnValue);
 }
 
 
